@@ -1,0 +1,291 @@
+{
+    "name": "BIDSAppOPPNI",
+    "tool-version": "1.0.0",
+    "schema-version": "0.5",
+    "description": "Boutique JSON Descriptor for OPPNI.",
+    "author":"L. Mark Prati,  Strother Lab, Baycrest",
+    "command-line": "Xvfb :88 -screen 0 1024x768x24 >/dev/null 2>&1 & sleep 4; export DISPLAY=':88'; python3 [OPPNI_LOCATION] [BIDS_DIR] [OUTPUT_DIR] [ANALYSIS_LEVEL] [PARTICIPANT_LABEL] [TASK_NAME] [ENVIRONMENT] -c pipeline_file.txt -r Sample_reference.nii --run_locally; status=$?;  kill %1 ; (exit $status)",
+    "container-image":{
+            "image": "mprati/oppni_cbrain",
+            "index": "docker://", 
+            "type": "singularity"
+          },
+    "suggested-resources": {
+        "walltime-estimate": 225000
+    },
+    "inputs":[{
+            "value-key": "[OPPNI_LOCATION]", 
+            "type": "String", 
+            "optional": true, 
+            "id": "oppni_location", 
+            "value-choices":[
+		"/oppni/cPRONTO/oppni.py"
+	     ],
+            "name": "OPPNI file",
+            "default-value": "/oppni/cPRONTO/oppni.py",
+            "description":"Path to the oppni.py version you are using, example ./oppni/cPRONTO/oppni.py"
+         },
+         {
+	    "id": "bids_dir",
+	    "name": "BIDS directory",
+	    "type": "File",
+	    "description": "The directory with the input dataset formatted according to the BIDS standard. (default OPPNI pipeline and refrence files should also be placed here)",
+	    "value-key": "[BIDS_DIR]",
+	    "optional": false
+	  },
+	  {
+	    "id": "output_dir_name",
+	    "name": "Output directory name",
+	    "type": "String",
+	    "description": "The directory where the output files should be stored. If you are running a group level analysis, this folder should be prepopulated with the results of the participant level analysis.",
+	    "value-key": "[OUTPUT_DIR]",
+	    "optional": false
+	  },
+          {
+            "command-line-flag": "-e",
+            "value-key": "[ENVIRONMENT]",
+            "type": "String",
+            "optional": false,
+            "value-choices":[
+                "octave",
+                "matlab"
+             ],
+            "default-value": "octave",
+            "id": "environment",
+            "name": "Environment",
+            "description":"Environment in which the pieline will be executed"
+         },
+
+          {
+            "command-line-flag": "--analysis_level",
+            "value-key": "[ANALYSIS_LEVEL]", 
+            "type": "String", 
+            "optional": true, 
+            "id": "analysis_level", 
+            "name": "Analysis_Level",
+            "description":"Level of analysis that will be performed. Must begin with either 'participant' or 'group'. Multiple participant level analysis can be run independently (in parallel) using the same output_dir."
+         },        
+         {
+            "command-line-flag": "--participant_label",
+            "value-key": "[PARTICIPANT_LABEL]", 
+            "type": "String", 
+            "optional": true, 
+            "id": "participant_label", 
+            "name": "Participant_Label",
+            "description":"The label(s) of the participant(s) to be analyzed. Label(s) corresponds to sub-<participant_label> from the BIDS spec (does not include 'sub-'). If not provided all subjects will be analyzed. Multiple participants can be specified with a space or comma separated list."
+         },        
+         {
+            "command-line-flag": "--taskname",
+            "value-key": "[TASK_NAME]",
+            "type": "String",
+            "optional": true,
+            "id": "taskname",
+            "name": "Taskname",
+            "description":"Name of the fMRI task you want to analyze. Note all tasks in the data set will processed if not specified."
+         },        
+         {
+            "command-line-flag": "-a",
+            "value-key": "[ANALYSIS_TYPE]", 
+            "type": "String", 
+            "optional": false, 
+            "value-choices":[
+		"LDA",
+		"GNB",
+		"GLM",
+		"erCVA",
+		"erGNB",
+		"erGLM",
+		"SCONN",
+		"NONE"
+	     ],
+            "id": "analysis_type", 
+            "name": "Anaylsis Type",
+            "description":"Chosen analysis model (LDA, GNB, GLM, erCVA, erGNB, erGLM, SCONN, NONE). (oppni -a option)"
+         },        
+         {
+            "value-key": "[ANALYSIS_TYPE_ADJUSTMENTS]", 
+            "type": "String", 
+            "optional": true, 
+            "id": "analysis_type_adjustments", 
+            "name": "Anaylsis Type Adjustments",
+            "description":"Some analysis models allow for slight adjustments. Type in the flags. --decision_model,--drf,--Nblock,--WIND,--subspace,--spm. Please review the OPPNI manual to learn more."
+         },   
+         {
+            "command-line-flag": "--TPATTERN",
+            "value-key": "[TPATTERN]", 
+            "type": "String", 
+            "optional": false, 
+            "value-choices":[
+		"alt+z",
+		"alt+z2",
+		"alt-z",
+		"alt-z2",
+		"seq+z",
+		"seq-z",
+		"auto_hdr"
+	     ],
+            "default-value": "auto_hdr",
+            "id": "tpattern", 
+            "name": "T Pattern ",
+            "description":"Defines axial slices acquisition order for slice-timing correction - this must be specified whenever slice timing correction is requested. (oppni --TPATERN option)"
+         }, 
+         {  "command-line-flag": "--convolve",
+            "value-key": "[CONVOLVE]", 
+            "type": "Number", 
+            "optional": true, 
+            "maximum": 1,
+            "minimum": 0,
+            "default-value": 0,
+            "id": "convolve", 
+            "name": "Convolve Value",
+            "description":"Binary value, determines whether user-provided design matrix (in split_info) should be convolved with the canonical HRF modeled by two gamma functions (AFNI’s “SPM1” function), for TASK pipeline step and GLM analysis.  0 = do not convolve and 1 = perform convolution (default =0)(oppni -convolve option)"
+         },          
+         {
+            "command-line-flag": "-m",
+            "value-key": "[METRIC]", 
+            "type": "String", 
+            "optional": true, 
+            "value-choices":[
+		"P",
+		"R",
+		"dPR"
+	     ],
+            "default-value": "dPR",
+            "id": "metric", 
+            "name": "Metric",
+            "description":"Metric used to choose optimal pipelines standard options include ‘R’= reproducibility, ‘P’= prediction, ‘dPR= combined prediction & reproducibility (this is the default). (oppni -m option)"
+         },
+         {
+            "command-line-flag": "--contrast",
+            "value-key": "[CONTRAST]", 
+            "type": "String", 
+            "optional": true, 
+            "default-value": "None",
+            "id": "contrast", 
+            "name": "Contrast Combination",
+            "description":"Task contrast being analyzed and optimized for. Necessary when more than two conditions are defined in the split_info files. Syntax: --contrast 'CON1-CON2,CON2-CON3', where CON1, CON2 are condition names (The condition number may be used instead, e.g. –contrast 1-2,2-3 ). Default is --contrast 1-2. (See Subsection 4.ii for more details)  If you are doing a single condition, choose ‘None’, whence this is omitted. NOTE: event-related analysis is *always* relative to baseline, e.g. --contrast “CON1-baseline”, as it is modelling HRF shape relative to baseline BOLD signal. (oppni --contrast option)"
+         },
+         {
+            "command-line-flag": "--vasc_mask",
+            "value-key": "[VASC_MASK]", 
+            "type": "Number", 
+            "optional": true, 
+            "maximum": 1,
+            "minimum": 0,
+            "default-value": 1,
+            "id": "vasc_mask", 
+            "name": "Vascular Mask",
+            "description":"Toggles estimation of subject-specific vascular mask that would be excluded prior to analysis (0: disble, 1: enable). Default enabled. (oppni --vasc_mask option)"
+          },
+          {
+            "command-line-flag": "--num_PCs",
+            "value-key": "[NUM_PCS]", 
+            "type": "Number", 
+            "optional": true, 
+            "id": "num_pcs", 
+            "name": "Number of PCs to Retain",
+            "description":"NUMBER = total number of principal components to retain. (oppni --num_PCs option)"
+          },
+	  {
+            "command-line-flag": "-k",
+            "value-key": "[KEEPMEAN]", 
+            "type": "Number", 
+            "optional": true, 
+            "maximum": 1,
+            "minimum": 0,
+            "default-value": 0,
+            "id": "keepmean", 
+            "name": "Keep Mean",
+            "description":"KEEPMEAN=binary value that determines whether the output nifti files have temporal means re-added to each voxel after processing (default KEEPMEAN=1, not remove the mean scan), or the mean is removed and not replaced (KEEPMEAN=0). (oppni -k option)"
+          },         
+          {
+            "command-line-flag": "--voxelsize",
+            "value-key": "[VOXEL_SIZE]", 
+            "type": "String", 
+            "optional": true, 
+            "id": "voxel_size", 
+            "name": "Voxel Size",
+            "description":"Determines the output voxel size of nifti file. Syntax: -v “[3.0 3.0 5.0]” gives 3x3x5 mm voxels as final results. Default is to keep output voxels the same size as input.  (oppni --voxelsize option)"
+         }, 	 
+         {
+            "command-line-flag": "--BlurToFWHM",
+            "value-key": "[BLURTOFWHM]", 
+            "type": "Number", 
+            "optional": true, 
+            "maximum": 1,
+            "minimum": 0,
+            "default-value": 0,
+            "id": "blurtofwhm", 
+            "name": "Blur to FWHM",
+            "description":"This option will enable adaptive spatial smoothing to equalize smoothing across multiple sites. Default 0. (oppni --BlurToFWHM option)"
+          },
+          {
+            "command-line-flag": "--DEOBLIQUE",
+            "value-key": "[DEOBLIQUE]", 
+            "type": "Flag", 
+            "list": false, 
+            "optional": true,
+            "id": "deoblique", 
+            "name": "Deoblique",
+            "description":"Corrects for raw data that are at an oblique angle relative to the cardinal scanning axes, using AFNI’s 3dWarp program. May improve the quality of registration. (oppni --DEOBLIQUE option)"
+          },
+          {
+            "command-line-flag": "--control_motion_artifact",
+            "value-key": "[CONTROL_MOTION_ARTIFACT]", 
+            "type": "String", 
+            "optional": true, 
+            "value-choices":[
+		"yes",
+		"no"
+	     ],
+            "default-value": "yes",
+            "id": "control_motion_artifact", 
+            "name": "Control Motion Artifact",
+            "description":"Control for motion artifact. Default yes.  (oppni --control_motion_artifact option)"
+         }, 
+         {
+            "command-line-flag": "--control_wm_bias",
+            "value-key": "[CONTROL_WM_BIAS]", 
+            "type": "String", 
+            "optional": true, 
+            "value-choices":[
+		"yes",
+		"no"
+	     ],
+            "default-value": "no",
+            "id": "control_wm_bias", 
+            "name": "Control WM Bias",
+            "description":"Control for white matter bias using spatial priors. Default no. (oppni --control_wm_bias option)"
+         },
+         {
+            "command-line-flag": "--output_nii_also",
+            "value-key": "[OUPUT_NII_ALSO]", 
+            "type": "Number", 
+            "optional": true, 
+            "maximum": 1,
+            "minimum": 0,
+            "default-value": 0,
+            "id": "output_nii_also", 
+            "name": "Output the nii also",
+            "description":"Whether to output spms for all the optimal pipelines. (oppni --output_nii_also option)"
+          } ],
+    "output-files":[{
+            "description": "Completion check for the project, existence implies the complete job was successfull.", 
+            "path-template": "[OUTPUT_DIR]/Task_Complete_CBRAIN.txt", 
+            "optional": false, 
+            "id": "completion_file_indicator", 
+            "name": "Completion File Indicator"
+         }, {
+            "description": "OPPNI pipeline results.", 
+            "path-template": "[OUTPUT_DIR]", 
+            "optional": false, 
+            "id": "output_dir", 
+            "name": "OPPNI Results"
+         }],
+    "error-codes": [
+        {
+            "code": 2,
+            "description": "Error Code 2: Path to File inside Docker does not exist!"
+        }
+    ]
+}
