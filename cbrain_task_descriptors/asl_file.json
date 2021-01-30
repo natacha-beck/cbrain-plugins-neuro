@@ -1,0 +1,200 @@
+{
+    "name": "asl_file",
+    "description": "command line tool part of the basil environment",
+    "tool-version": "v4.0.15",
+    "schema-version": "0.5", 
+    "command-line": "asl_file --data=asltc --ntis=1 --iaf=tc --diff --out=asldiffdata --mean=asldiffdata_mean",
+    "inputs": [
+        {
+            "id": "data",
+            "name": "datafile used for perfusion analysis",
+            "optional": false,
+            "type": "string",
+            "command-line-flag": "--data",
+            "command-line-separator": "="
+        },
+        {
+            "id": "ntis",
+            "name": "Number of TIs in file",
+            "optional": false,
+            "type": "Number",
+            "minimum": 0,
+            "command-line-flag": "--ntis",
+            "command-line-separator": "="
+        },
+        {
+            "id": "mask",
+            "name": "Mask to be used",
+            "command-line-flag": "-f",
+            "optional": true,
+            "type": "File",
+            "value-key": "[FLAG1]"
+        },
+        {
+            "id": "input block format",
+            "name": "input block format can be either rpt or tis",
+            "optional": true,
+            "command-line-flag": "--ibf",
+            "command-line-separator": "=",
+            "value-key": "[rpt, tis]"
+        },
+        {
+            "id": "ASL data form",
+            "name": "ASL data form",
+            "type": "String",
+            "optional": true,
+            "command-line-flag": "--iaf",
+            "command-line-separator": "=",
+            "value-key": "[diff, tc, ct, tcb]"
+        },
+        {
+            "id": "repeats",
+            "name": "Number of repeats at each TI as comma separated list, not required if the number of repeats is same for all TIs  (only for use with --ibf=tis)",
+            "type": "List",
+            "optional": true,
+            "command-line-flag": "--rpts"
+        },
+        {
+            "id": "spairs",
+            "name": "Split the pairs within the data, e.g. to separate tag and control images in output",
+            "type": "Flag",
+            "optional": true,
+            "command-line-flag": "--spairs"
+        },
+        {
+            "id": "diff",
+            "name": "Take the difference between the pairs, i.e. Tag control difference",
+            "type": "Flag",
+            "optional": true,
+            "command-line-flag": "--diff"
+        },
+        {
+            "id": "surrdiff",
+            "name": "Do surround subtraction on the pairs",
+            "type": "Flag",
+            "optional": true,
+            "command-line-flag": "--surffdiff"
+        },
+        {
+            "id": "extrapolate",
+            "name": "Option to extrapolate the edge of the brain to fix the artefact on the edge of the brain",
+            "type": "Flag",
+            "optional": true,
+            "command-line-flag": "--extrapolate"
+        },
+        {
+            "id": "neighbour",
+            "name": "Neighbour size for extrapolation, must be an odd number between 3 and 9. Default: 5",
+            "type": "Number",
+            "optional": true,
+            "command-line-flag": "--neighbour",
+            "value-key": "[3, 5, 7, 9]"
+
+        },
+        {
+            "id": "pvgm",
+            "name": "GM partial volume map",
+            "type": "Flag",
+            "optional": true,
+            "command-line-flag": "--pvgm"
+        },
+        {
+            "id": "pvwm",
+            "name": "WM partial volume map",
+            "type": "Flag",
+            "optional": true,
+            "command-line-flag": "--pvwm"
+        },
+        {
+            "id": "kernel",
+            "name": "Kernel size (in voxels) of partial volume correction, must be an odd number between 3 and 9. Default: 5",
+            "type": "Number",
+            "optional": true,
+            "command-line-flag": "--kernel",
+            "value-key": "[3, 5, 7, 9]"
+        },
+        {
+            "id": "kernel",
+            "name": "Kernel size (in voxels) of partial volume correction, must be an odd number between 3 and 9. Default: 5",
+            "type": "Number",
+            "optional": true,
+            "command-line-flag": "--kernel",
+            "value-key": "[3, 5, 7, 9]"
+        },
+        {
+            "id": "obf",
+            "name": "Output block format (for --out=):",
+            "type": "String",
+            "optional": true,
+            "command-line-flag": "--obf",
+            "command-line-separator": "=",
+            "value-key": "[rpt, tis]"
+        },
+        {
+            "id": "mean",
+            "name": "Output ASL data having taken mean at each TI to file",
+            "type": "Number",
+            "optional": true,
+            "command-line-flag": "--mean",
+            "command-line-separator": "="
+        },
+        {
+            "id": "split",
+            "name": "Split data into separate files each each TI, specify filename root",
+            "type": "String",
+            "optional": true,
+            "command-line-flag": "--split",
+            "command-line-separator": "="
+        },
+        {
+            "id": "elen",
+            "name": "Length of epochs in number of repeats",
+            "type": "Number",
+            "optional": true,
+            "command-line-flag": "--elen",
+            "command-line-separator": "="
+        },
+        {
+            "id": "eol",
+            "name": "Ammount of overlap between epochs in number of repeats",
+            "type": "Number",
+            "optional": true,
+            "command-line-flag": "--eol",
+            "command-line-separator": "="
+        },
+        {
+            "id": "eunit",
+            "name": "Epochs to be determined over:",
+            "type": "String",
+            "optional": true,
+            "command-line-flag": "--eunit",
+            "command-line-separator": "=",
+            "value-key": "[rpt, tis]"
+        },
+        {
+            "id": "deconv",
+            "name": "Deconvolution of data with arterial input functions",
+            "type": "Flag",
+            "optional": true,
+            "command-line-flag": "--deconv",
+            "command-line-separator": "="
+        },
+        {
+            "id": "aif",
+            "name": "Arterial input functions for deconvolution (4D volume, one aif for each voxel within mask)",
+            "type": "Flag",
+            "optional": true,
+            "command-line-flag": "--aif"
+        }
+
+    ],
+    "output-files": [
+        {
+            "id": "out",
+            "name": "Output data file",
+            "optional": true,
+            "command-line-flag": "--out",
+            "command-line-separator": "="
+        }
+    ]
+}
